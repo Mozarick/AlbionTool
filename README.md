@@ -16,7 +16,7 @@ git clone --recurse-submodules https://github.com/Mozarick/AlbionTool.git
 cd AlbionTool
 ```
 
-Repo riêng tư: tài khoản clone cần được cấp quyền. Nếu đã clone mà thiếu dependency:
+Repo công khai: ai có link đều có thể xem và clone. Nếu đã clone mà thiếu dependency:
 
 ```powershell
 git submodule update --init --recursive
