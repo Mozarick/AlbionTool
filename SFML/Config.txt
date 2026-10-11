@@ -1,1 +1,163 @@
 screen_resolution: 1920, 1080
+
+# Folder holding eng.traineddata. Leave empty to use the TESSDATA_PREFIX
+# environment variable instead.
+tessdata_path: C:\Program Files\Tesseract-OCR\tessdata
+
+# How long a mouse button is held down, and how long the bot waits after a
+# click before doing anything else. Raise both if the game starts missing
+# clicks; lower them to go faster.
+click_hold_ms: 25
+click_delay_ms: 50
+
+# Pause between each keystroke while typing an item name or amount. Must stay
+# above 0: typing the whole string in one burst looks like a paste to the
+# game and the search box's item-tab autocomplete never opens, even though
+# the text ends up correct. Small is fine - this only needs to be enough for
+# each keystroke to register as its own event, not enough to look unhurried.
+type_char_delay_ms: 10
+
+# The bot watches the price panel and reads it as soon as it stops changing,
+# instead of sleeping a fixed amount. poll_interval_ms is how often it looks,
+# wait_timeout_ms is how long it keeps waiting before reading anyway.
+poll_interval_ms: 15
+wait_timeout_ms: 1200
+
+# How long a dropdown gets to finish drawing before OCR reads it. Too low and
+# the bot reads a half-drawn menu and picks the wrong row (looks like it jumps
+# from tier 4 to tier 7). Raise it if tiers get skipped.
+menu_open_delay_ms: 350
+
+# After clicking the tab/pager button the bot waits this long for new market
+# data. No data = "the listing has ended, stop walking the tabs". A laggy
+# game looks exactly the same, so if the log says it stopped after fewer tab
+# switches than the listing actually has, raise this.
+page_timeout_ms: 1200
+
+# Extra pause after each tab click, on top of click_delay_ms. Tuned for East
+# server ping (~60ms); raise this back toward 100 if playing on EU (~270ms)
+# and tabs start getting skipped.
+page_click_delay_ms: 40
+
+# How many tab clicks in a row must come back with no data before the bot
+# believes the listing has really ended.
+#
+# One is not enough. "No new data" is how the end of a listing looks, but it is
+# also exactly how a slow round trip to the server looks, so a single quiet
+# click used to end the scan - that is why scans stopped after only a few tabs
+# with no error in the log. Raise this (or page_timeout_ms) if the tab count in
+# the log is still lower than what the game actually shows.
+page_quiet_clicks: 2
+
+# How many rows a full market tab holds. The game shows at most 50, so a tab
+# that comes back with FEWER than this is the last one - there is nothing
+# behind it to click for, and the bot stops walking immediately instead of
+# clicking again and waiting page_quiet_clicks x page_timeout_ms to confirm
+# silence it already has the answer to. Scanning a high tier that holds one
+# item used to pay that full cost for nothing.
+#
+# Set to 0 to switch the shortcut off and go back to the quiet-click test
+# alone. If the game ever changes the tab size, correct this - too LOW is the
+# dangerous direction, because a full page would then read as short and the
+# rest of the listing would be dropped.
+page_size: 50
+
+# The cursor now travels to each click along a curved, eased path instead of
+# jumping straight there. move_ms_per_100px is roughly how long it takes to
+# cross 100 pixels, clamped between move_min_ms and move_max_ms so very short
+# or very long moves still feel reasonable. move_jitter_px controls how far
+# the path bows sideways and wobbles; set it to 0 for an instant straight-line
+# move (the old behavior).
+move_ms_per_100px: 45
+move_min_ms: 150
+move_max_ms: 700
+move_jitter_px: 3
+
+# How far a click may land from the exact centre of its target. Keep this
+# small: dropdown rows are only ~26px apart, so a large value clicks the
+# wrong row.
+move_target_slop_px: 3
+
+# How many units one Buy click may take.
+#
+# Leave this at 1. The market lists one row per seller, so needing five of
+# something is normally five separate rows holding one each - and the buy
+# dialog only has a quantity box when the row itself holds more than one.
+# Typing a number into a dialog with no quantity box breaks the clicks that
+# follow, which is what the old "purchase did not register" meant. One click
+# per unit never touches that box; the top row is bought out and the next one
+# slides up into the same place.
+buy_units_per_click: 1
+
+# How long to wait for AlbionFeed to report that the game acted on a buy click.
+# This is a round trip to the game server, so it is longer than the UI waits
+# above. Raise it if buying reports "the game never acted on the buy click"
+# while purchases are visibly happening.
+purchase_confirm_ms: 1500
+
+# How many times to click Buy again on a row the game never acknowledged before
+# giving up on the item. A click that goes missing is usually the window losing
+# focus for a moment.
+buy_retries: 2
+
+# How many times to wait again for a searched listing before declaring the item
+# gone from the market. A search result arrives as several packets with
+# unrelated ones mixed in, so a single read can miss it entirely and throw away
+# a lot whose goods are still on screen. Raise it on a laggy connection.
+search_retries: 3
+
+# Another player taking the row the bot aimed at is normal - the row below
+# slides up and the click buys that one instead. The bot carries on when it can
+# still price what it bought. This is how many purchases at a price it could NOT
+# find in its own copy of the listing it will absorb before abandoning the item;
+# those are the ones whose margin was never checked. Set to 0 to stop at the
+# first one.
+stray_buy_limit: 3
+
+# Flipping limits. Selling into a black market order costs 4% tax, which the
+# planner already subtracts. Buying takes existing offers rather than posting
+# an order, so there is no 2.5% setup fee to account for.
+#
+# budget          silver the BuyCity run may spend; 0 = no limit set here
+#                 (the BuyCity button asks for a figure and that wins)
+# min_profit_percent  ignore anything thinner than this
+# max_unit_price  never pay more than this for one item; 0 = no ceiling
+budget: 0
+min_profit_percent: 20
+max_unit_price: 0
+
+# A second threshold, next to the percentage: the least TOTAL profit one lot
+# must earn, in silver. It is the last column of the plan table, not a per-unit
+# figure. 0 leaves it out and the percentage decides alone.
+#
+# It answers what a percentage cannot. 300% on a 2000-silver flip is a lovely
+# rate and forty silver of profit, and a screen full of those is not worth the
+# clicking.
+#
+# profit_combine says how the two work together:
+#   and  a lot must clear BOTH  - worth the time and worth the silver
+#   or   either one is enough   - lets a fat-but-thin flip through next to a
+#                                 thin-but-huge one
+#
+# BuyCity asks for both figures and the and/or at the time, and those win.
+# These two are what Plan and Deals preview with, so the preview matches.
+min_profit_silver: 0
+profit_combine: and
+
+# The emergency stop, held down until the bot notices.
+#
+# A scan or a buying run blocks the bot's event thread from start to finish and
+# minimises its window, so the bot is not listening to its own keyboard while
+# it works: this key is read straight from the OS instead. The game therefore
+# gets the keystroke as well, which is the whole reason the default is a
+# three-key combination and not something like F12 - it has to be a chord no
+# Albion binding and no Steam overlay will answer.
+#
+# Stopping is not pausing. It leaves the loop at the next safe boundary -
+# between lots, between quality bands, between categories, never in the middle
+# of a purchase the game has not answered yet - saves holdings.tsv, and returns
+# to the menu. Everything already bought stays bought and stays in the ledger.
+#
+# Accepts modifiers ctrl/shift/alt plus one of: a letter, a digit, f1..f12,
+# pause, scrolllock, insert, end. Anything it cannot read leaves the default.
+abort_hotkey: ctrl+shift+q

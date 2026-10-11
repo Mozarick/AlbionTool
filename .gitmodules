@@ -1,0 +1,3 @@
+[submodule "AlbionDataAvalonia"]
+	path = AlbionDataAvalonia
+	url = https://github.com/JPCodeCraft/AlbionDataAvalonia.git

@@ -1,15 +1,6 @@
 #include "../Headers/Shapes.h"
 
 // Functions
-void PrintRectangle(RectangleShape& rect,
-	const Vector2f& pos, const Vector2f& size) {
-	rect.setPosition(pos);
-	rect.setSize(size);
-	rect.setFillColor(Color::Green);
-
-}
-
-
 void EmptyBox(RectangleShape& rect, const Vector2f& pos,
 	const Vector2f& size) {
 
@@ -30,16 +21,6 @@ void CreateText(Text& text, const Vector2f& pos, const Font& font,
 	text.setFillColor(sf::Color::White);
 	text.setPosition( 10 + pos.x, 10 + pos.y);
 }
-
-RectangleShape CreateFrame(const Vector2f& pos, const Vector2f& size) {
-	RectangleShape rect(size);
-	rect.setPosition(pos);
-	rect.setFillColor(Color::Transparent);
-	rect.setOutlineColor(Color::Yellow);
-	rect.setOutlineThickness(2);
-	return rect;
-}
-
 
 // Class TextBox
 

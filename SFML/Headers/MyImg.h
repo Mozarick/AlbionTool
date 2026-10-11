@@ -9,7 +9,8 @@ using namespace std;
 
 struct MyImg {
 
-	Image image;
+	// no sf::Image member: it was only ever used to build the texture and
+	// then kept the whole decoded bitmap in RAM for nothing
 	Texture texture;
 	Sprite sprite;
 	string category;

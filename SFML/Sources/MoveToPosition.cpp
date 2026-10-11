@@ -1,251 +1,309 @@
 #include "../Headers/MoveToPosition.h"
-#include "../Headers/Config.h"
 
-MyConfig Config;
-
-
-// Coordinates of position all the tier items; 
-// Tier 1 = (X, Y);
-map<int, pair<int, int>> TierPosition = {
-	{1, {950, 325}},
-	{2, {950, 353}},
-	{3, {950, 379}},
-	{4, {950, 407}},
-	{5, {950, 434}},
-	{6, {950, 460}},
-	{7, {950, 488}},
-	{8, {950, 515}}
-};
-
-map<int, pair<int, int>> TierPositionC = {
-	{4, {500, 428}},
-	{5, {500, 455}},
-	{6, {500, 482}},
-	{7, {500, 509}},
-	{8, {500, 535}},
-	{9, {500, 563}},
-	{10, {500, 590}},
-	{11, {500, 617}},
-};
-
-// Coordinates of position all the enchant items; 
-// Enchant 1 = (X, Y);
-map<int, pair<int, int>> EnchantPosition = {
-	{0, {1100, 325}},
-	{1, {1100, 340}},
-	{2, {1100, 379}},
-	{3, {1100, 407}}
-};
-
-map<int, pair<int, int>> EnchantPositionC = {
-	{0, {675, 428}},
-	{1, {675, 455}},
-	{2, {675, 482}},
-	{3, {675, 509}},
-};
-
-// Coordinates of position all the quality items; 
-// Enchant 1 = (X, Y);
-map<int, pair<int, int>> QualityPosition = {
-	{0, {1235, 298}},
-	{1, {1235, 325}},
-	{2, {1235, 353}},
-	{3, {1235, 379}},
-	{4, {1235, 407}},
-	{5, {1235, 434}},
-};
-
+#include <cmath>
+#include <iostream>
+#include <random>
 
 
 // Mouse and Keyboard Events
+
+// The button is held for ClickHoldMs because a press that goes down and up in
+// the same tick tends to be dropped by the game. Both delays come from
+// Config.txt: raise them if clicks start getting missed.
 void MouseLeftClick() {
-	Sleep(120);
-	/*INPUT Inputs[1] = { 0 };
+	INPUT inputs[2] = {};
 
-	Inputs[0].type = INPUT_MOUSE;
-	Inputs[0].mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
-	UINT uSent = SendInput(ARRAYSIZE(Inputs), Inputs, sizeof(INPUT));
-	if (uSent != ARRAYSIZE(Inputs))
-	{
-		printf("SendInput failed: 0x%x\n", HRESULT_FROM_WIN32(GetLastError()));
-	}*/
+	inputs[0].type = INPUT_MOUSE;
+	inputs[0].mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
+	inputs[1].type = INPUT_MOUSE;
+	inputs[1].mi.dwFlags = MOUSEEVENTF_LEFTUP;
 
-	mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-	Sleep(100);
-	mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-		
-	/*Inputs[0].type = INPUT_MOUSE;
-	Inputs[0].mi.dwFlags = MOUSEEVENTF_LEFTUP;
-	uSent = SendInput(ARRAYSIZE(Inputs), Inputs, sizeof(INPUT));
-	if (uSent != ARRAYSIZE(Inputs))
-	{
-		printf("SendInput failed: 0x%x\n", HRESULT_FROM_WIN32(GetLastError()));
-	}*/
-	Sleep(100);
-}
+	UINT uSent = SendInput(1, &inputs[0], sizeof(INPUT));
+	Sleep(Config.ClickHoldMs);
+	uSent += SendInput(1, &inputs[1], sizeof(INPUT));
 
-void KeyBrdBtnPress(char lt) {
-	INPUT inputs[1] = {};
-	inputs[0].type = INPUT_KEYBOARD;
-
-	inputs[0].ki.wVk = 0;
-	inputs[0].ki.dwFlags = KEYEVENTF_UNICODE;
-	inputs[0].ki.wScan = lt;
-	UINT uSent = SendInput(ARRAYSIZE(inputs), inputs, sizeof(INPUT));
-
-	if (uSent != ARRAYSIZE(inputs))
-	{
-		printf("SendInput failed: 0x%x\n", HRESULT_FROM_WIN32(GetLastError()));
+	if (uSent != 2) {
+		// cout, not printf: printf goes to the C stdout, which is discarded in
+		// a GUI binary. A failed SendInput means the click never reached the
+		// game at all - exactly the thing worth seeing in the log.
+		cout << "SendInput failed: 0x" << hex
+			<< HRESULT_FROM_WIN32(GetLastError()) << dec << '\n';
 	}
-	Sleep(100);
+
+	Sleep(Config.ClickDelayMs);
 }
 
-// Move to Positiopns
-void MoveToInsertName() {
-	SetCursorPos(Config.ScreenScale.first * 650, Config.ScreenScale.second * 270);
+static mt19937& RngEngine() {
+	static mt19937 rng(random_device{}());
+	return rng;
+}
+
+static double Uniform(double lo, double hi) {
+	return uniform_real_distribution<double>(lo, hi)(RngEngine());
+}
+
+// Ease-in-ease-out: slow to start, fastest in the middle, slow to land.
+// A real hand accelerates into a move and brakes before the target instead
+// of travelling at a constant speed the whole way.
+static double SmoothStep(double t) {
+	return t * t * (3.0 - 2.0 * t);
+}
+
+// Moves the cursor to (target_x, target_y) along a slightly bowed path
+// instead of jumping there in one SetCursorPos call. The path is a cubic
+// Bezier bowed sideways by a random amount (so repeated moves don't retrace
+// the exact same line), walked in short steps with a small perpendicular
+// wobble that fades out near the target so the final position is still
+// exact. Config.MoveJitterPx = 0 disables the bow/wobble and Config.MoveMinMs
+// disables the pacing, without changing where the cursor ends up.
+static void HumanMove(int target_x, int target_y) {
+	POINT start;
+	GetCursorPos(&start);
+
+	double dx = target_x - start.x;
+	double dy = target_y - start.y;
+	double distance = sqrt(dx * dx + dy * dy);
+
+	if (distance < 1.0) {
+		SetCursorPos(target_x, target_y);
+		return;
+	}
+
+	// unit vector perpendicular to the travel direction, used to bow the
+	// curve and to place the wobble sideways rather than along the path
+	double nx = -dy / distance;
+	double ny = dx / distance;
+
+	double jitter = double(max(0, Config.MoveJitterPx));
+	double bow = jitter > 0 ? Uniform(-1.0, 1.0) * min(distance * 0.15, jitter * 6.0) : 0.0;
+
+	// two control points a third and two-thirds of the way along, each
+	// pushed a little further off the line than the last for a natural,
+	// slightly asymmetric curve rather than a perfect arc
+	double c1x = start.x + dx * 0.33 + nx * bow * 0.6;
+	double c1y = start.y + dy * 0.33 + ny * bow * 0.6;
+	double c2x = start.x + dx * 0.66 + nx * bow;
+	double c2y = start.y + dy * 0.66 + ny * bow;
+
+	int duration = int(distance / 100.0 * max(1, Config.MoveMsPer100px));
+	duration = max(Config.MoveMinMs, min(Config.MoveMaxMs, duration));
+
+	int steps = max(6, min(40, int(distance / 12.0)));
+	int stepDelay = max(1, duration / steps);
+
+	for (int i = 1; i <= steps; ++i) {
+		double t = double(i) / steps;
+		double te = SmoothStep(t);
+		double it = 1.0 - te;
+
+		// cubic Bezier: P0(1-t)^3 + 3*C1(1-t)^2*t + 3*C2(1-t)*t^2 + P3*t^3
+		double x = it * it * it * start.x
+			+ 3 * it * it * te * c1x
+			+ 3 * it * te * te * c2x
+			+ te * te * te * target_x;
+		double y = it * it * it * start.y
+			+ 3 * it * it * te * c1y
+			+ 3 * it * te * te * c2y
+			+ te * te * te * target_y;
+
+		// wobble fades out at both ends of the path so the move starts and
+		// lands exactly on target instead of overshooting it
+		double wobble = jitter * sin(3.14159265 * t) * Uniform(-1.0, 1.0);
+		x += nx * wobble;
+		y += ny * wobble;
+
+		SetCursorPos(int(lround(x)), int(lround(y)));
+		Sleep(stepDelay);
+	}
+
+	SetCursorPos(target_x, target_y);
+}
+
+void MoveAndClick(int base_x, int base_y) {
+	int target_x = int(Config.ScreenScale.first * base_x);
+	int target_y = int(Config.ScreenScale.second * base_y);
+
+	// a human never clicks the exact same pixel twice; nudge the aim point
+	// itself before travelling to it, rather than arriving precisely and
+	// only wobbling along the way
+	int slop = max(0, Config.MoveTargetSlopPx);
+	if (slop > 0) {
+		target_x += int(lround(Uniform(-slop, slop)));
+		target_y += int(lround(Uniform(-slop, slop)));
+	}
+
+	HumanMove(target_x, target_y);
 	MouseLeftClick();
 }
 
-void MoveToTier(int tier) {
-	SetCursorPos(Config.ScreenScale.first * 950, Config.ScreenScale.second * 270);
-	MouseLeftClick();
-	SetCursorPos(Config.ScreenScale.first * TierPosition[tier].first, Config.ScreenScale.second * TierPosition[tier].second);
+// Picks a point inside the rectangle, optionally scaling it from the 1920x1080
+// reference frame first.
+//
+// Split out from the click so hovering can choose its point the same way.
+// Cascading menus are entered by hovering a row rather than clicking it, and
+// that hover had no business being the one movement in the program that always
+// landed on an exact pixel.
+static void PointInside(const ClickRect& area, bool scaleFromBase,
+	int& pick_x, int& pick_y) {
+
+	int lo_x = min(area.x1, area.x2);
+	int hi_x = max(area.x1, area.x2);
+	int lo_y = min(area.y1, area.y2);
+	int hi_y = max(area.y1, area.y2);
+
+	// stay a pixel off the border so a rounding slip cannot land outside
+	if (hi_x - lo_x > 2) {
+		++lo_x;
+		--hi_x;
+	}
+	if (hi_y - lo_y > 2) {
+		++lo_y;
+		--hi_y;
+	}
+
+	pick_x = int(lround(Uniform(lo_x, hi_x)));
+	pick_y = int(lround(Uniform(lo_y, hi_y)));
+
+	if (scaleFromBase) {
+		pick_x = int(Config.ScreenScale.first * pick_x);
+		pick_y = int(Config.ScreenScale.second * pick_y);
+	}
+}
+
+static void ClickInside(const ClickRect& area, bool scaleFromBase) {
+	int pick_x = 0;
+	int pick_y = 0;
+	PointInside(area, scaleFromBase, pick_x, pick_y);
+
+	// No extra aim error here on purpose. Picking a random point inside the
+	// rectangle already gives the movement its human variation, and adding
+	// MoveTargetSlopPx on top pushes the click outside thin targets - the
+	// tier button is only 7px tall, so a 3px slop missed it regularly and the
+	// dropdown never opened.
+	HumanMove(pick_x, pick_y);
 	MouseLeftClick();
 }
 
-void MoveToTierC(int tier) {
-	SetCursorPos(Config.ScreenScale.first * 520, Config.ScreenScale.second * 400);
-	MouseLeftClick();
-	SetCursorPos(Config.ScreenScale.first * TierPositionC[tier].first, Config.ScreenScale.second * TierPositionC[tier].second);
-	MouseLeftClick();
+void MoveToScreenPoint(int x, int y) {
+	int slop = max(0, Config.MoveTargetSlopPx);
+	if (slop > 0) {
+		x += int(lround(Uniform(-slop, slop)));
+		y += int(lround(Uniform(-slop, slop)));
+	}
+	HumanMove(x, y);
 }
 
-void MoveToEnchant(int enchant) {
-	SetCursorPos(Config.ScreenScale.first * 1100, Config.ScreenScale.second * 270);
-	MouseLeftClick();
-	SetCursorPos(Config.ScreenScale.first * EnchantPosition[enchant].first, Config.ScreenScale.second * EnchantPosition[enchant].second);
-	MouseLeftClick();
+void SelectAllAndDelete() {
+	INPUT inputs[6] = {};
+
+	// ctrl down, a down, a up, ctrl up
+	inputs[0].type = INPUT_KEYBOARD;
+	inputs[0].ki.wVk = VK_CONTROL;
+
+	inputs[1].type = INPUT_KEYBOARD;
+	inputs[1].ki.wVk = 'A';
+
+	inputs[2] = inputs[1];
+	inputs[2].ki.dwFlags = KEYEVENTF_KEYUP;
+
+	inputs[3] = inputs[0];
+	inputs[3].ki.dwFlags = KEYEVENTF_KEYUP;
+
+	// then wipe the selection
+	inputs[4].type = INPUT_KEYBOARD;
+	inputs[4].ki.wVk = VK_DELETE;
+
+	inputs[5] = inputs[4];
+	inputs[5].ki.dwFlags = KEYEVENTF_KEYUP;
+
+	UINT uSent = SendInput(ARRAYSIZE(inputs), inputs, sizeof(INPUT));
+	if (uSent != ARRAYSIZE(inputs)) {
+		// cout, not printf: printf goes to the C stdout, which is discarded in
+		// a GUI binary. A failed SendInput means the click never reached the
+		// game at all - exactly the thing worth seeing in the log.
+		cout << "SendInput failed: 0x" << hex
+			<< HRESULT_FROM_WIN32(GetLastError()) << dec << '\n';
+	}
+
+	Sleep(Config.ClickHoldMs);
 }
 
-void MoveToEnchantC(int enchant) {
-	SetCursorPos(Config.ScreenScale.first * 670, Config.ScreenScale.second * 400);
-	MouseLeftClick();
-	SetCursorPos(Config.ScreenScale.first * EnchantPositionC[enchant].first, Config.ScreenScale.second * EnchantPositionC[enchant].second);
-	MouseLeftClick();
+void MoveAndClickRect(const ClickRect& area) {
+	ClickInside(area, true);
 }
 
-void MoveToQuality(int qual) {
-	SetCursorPos(Config.ScreenScale.first * 1230, Config.ScreenScale.second * 270);
-	MouseLeftClick();
-	SetCursorPos(Config.ScreenScale.first * QualityPosition[qual].first, Config.ScreenScale.second * QualityPosition[qual].second);
-	MouseLeftClick();
+void MoveAndClickScreenRect(const ClickRect& area) {
+	ClickInside(area, false);
+}
+
+int MoveToRect(const ClickRect& area, int holdRowY) {
+	int pick_x = 0;
+	int pick_y = 0;
+	PointInside(area, true, pick_x, pick_y);
+
+	// Sliding along a row rather than entering one: keep the y that was
+	// already hovered, vary only the x.
+	if (holdRowY >= 0) {
+		pick_y = holdRowY;
+	}
+
+	// Same reasoning as ClickInside: the random point inside the rectangle is
+	// the variation, so no MoveTargetSlopPx on top of it.
+	HumanMove(pick_x, pick_y);
+	return pick_y;
+}
+
+// One SendInput call per character, not one call for the whole string.
+//
+// The whole-string version looked identical from inside the game to a paste:
+// every character landed in the same input batch, so the search box ended up
+// holding the right text but its autocomplete never opened, because nothing
+// fired the per-keystroke event that triggers it - the item tab just would
+// not show up. Splitting it back into one call per character fixes that.
+//
+// This used to be the slow way (one call per character *plus a full
+// click_delay_ms sleep after each one*, close to two seconds for a name).
+// The delay between characters is Config.TypeCharDelayMs instead, which is
+// meant to be small - it only has to be enough for the game to register each
+// keystroke as its own event, not enough to look unhurried.
+void TypeString(const string& text) {
+	if (text.empty()) {
+		return;
+	}
+
+	const int charDelay = max(0, Config.TypeCharDelayMs);
+	INPUT down{};
+	INPUT up{};
+
+	down.type = INPUT_KEYBOARD;
+	down.ki.dwFlags = KEYEVENTF_UNICODE;
+	up.type = INPUT_KEYBOARD;
+	up.ki.dwFlags = KEYEVENTF_UNICODE | KEYEVENTF_KEYUP;
+
+	for (size_t i = 0; i < text.size(); ++i) {
+		down.ki.wScan = text[i];
+		up.ki.wScan = text[i];
+
+		UINT uSent = SendInput(1, &down, sizeof(INPUT));
+		uSent += SendInput(1, &up, sizeof(INPUT));
+
+		if (uSent != 2) {
+			// cout, not printf: printf goes to the C stdout, which is
+			// discarded in a GUI binary. A failed SendInput means the
+			// keystroke never reached the game at all - exactly the thing
+			// worth seeing in the log.
+			cout << "SendInput failed: 0x" << hex
+				<< HRESULT_FROM_WIN32(GetLastError()) << dec << '\n';
+		}
+
+		if (charDelay > 0 && i + 1 < text.size()) {
+			Sleep(charDelay);
+		}
+	}
+
+	Sleep(Config.ClickDelayMs);
 }
 
 void ClearItemName() {
-	SetCursorPos(Config.ScreenScale.first * 722, Config.ScreenScale.second * 270);
-	MouseLeftClick();
+	MoveAndClick(722, 270);
 }
-
-void MoveToBuy() {
-	SetCursorPos(Config.ScreenScale.first * 1280, Config.ScreenScale.second * 430);
-	MouseLeftClick();
-}
-
-void MoveToBuy2() {
-	SetCursorPos(Config.ScreenScale.first * 885, Config.ScreenScale.second * 735);
-	MouseLeftClick();
-}
-
-void MoveToEdit() {
-	SetCursorPos(Config.ScreenScale.first * 1230, Config.ScreenScale.second * 410);
-	MouseLeftClick();
-}
-
-void MoveToEditPrice() {
-	SetCursorPos(Config.ScreenScale.first * 635, Config.ScreenScale.second * 635);
-	MouseLeftClick();
-}
-
-void UpdateOrder() {
-	SetCursorPos(Config.ScreenScale.first * 875, Config.ScreenScale.second * 735);
-	MouseLeftClick();
-}
-
-void CloseGameWindow() {
-	// Нажатие, чтобы закрыть окно (если открыто)
-	SetCursorPos(Config.ScreenScale.first * 937, Config.ScreenScale.second * 310);
-	MouseLeftClick();
-}
-
-void SellBtn() {
-	// Кнопка продать
-	SetCursorPos(Config.ScreenScale.first * 1280, Config.ScreenScale.second * 430);
-	MouseLeftClick();
-}
-
-void ClickSellTab() {
-	SetCursorPos(Config.ScreenScale.first * 1385, Config.ScreenScale.second * 415);
-	MouseLeftClick();
-}
-
-void ClickBuyTab() {
-	SetCursorPos(Config.ScreenScale.first * 1385, Config.ScreenScale.second * 335);
-	MouseLeftClick();
-}
-
-void PriceMinusOneSilver() {
-	SetCursorPos(Config.ScreenScale.first * 563, Config.ScreenScale.second * 635);
-	MouseLeftClick();
-}
-
-void PricePlusOneSilver() {
-	// Нажатие на +1 серебро для ордера
-	SetCursorPos(862, 635);
-	MouseLeftClick();
-}
-
-void ChooseCountOrder() {
-	// Выбираем количество 
-	SetCursorPos(Config.ScreenScale.first * 575, Config.ScreenScale.second * 575);
-	MouseLeftClick();
-}
-
-void ConfirmBuy() {
-	// Подтверждение покупки
-	SetCursorPos(807, 550);
-	MouseLeftClick();
-}
-
-void ConfirmBuy2() {
-	// Подтверждение если не можете носить итем
-	SetCursorPos(805, 575);
-	MouseLeftClick();
-}
-
-void NoName1() {
-	SetCursorPos(Config.ScreenScale.first * 990, Config.ScreenScale.second * 375);
-	MouseLeftClick();
-}
-
-void NoName2() {
-	SetCursorPos(Config.ScreenScale.first * 1275, Config.ScreenScale.second * 430);
-	MouseLeftClick();
-}
-
-void NoName3() {
-	SetCursorPos(Config.ScreenScale.first * 561, Config.ScreenScale.second * 540);
-	MouseLeftClick();
-}
-
-// Other
-void InsertItemName(const string& itemName) {
-	MoveToInsertName();
-	for (const auto& el : itemName) {
-		KeyBrdBtnPress(el);
-	}
-}
-
-
-
-
-

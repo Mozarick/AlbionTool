@@ -1,0 +1,67 @@
+# Visual Studio build output
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.obj
+*.pdb
+*.ilk
+*.idb
+*.iobj
+*.ipdb
+*.log
+*.tlog
+*.lastbuildstate
+*.recipe
+.vs/
+
+# per-user project settings
+*.vcxproj.user
+
+# scratch files the bot writes at runtime
+output.txt
+output_buy.txt
+test.txt
+img.bmp
+img.png
+img_buy.bmp
+img_buy.png
+test.png
+
+# saved price database
+_save_data.txt
+
+# Local market snapshots and reports (never commit players' price captures).
+SFML/craft_market.json
+SFML/craft_settings.json
+SFML/craft_profit.csv
+SFML/*.tmp
+tools/craft-data/
+tools/craft-artifacts/
+tools/__pycache__/
+
+# Local performance and UI regression output
+tools/tool-artifacts/
+
+# Local releases and personal shopping state
+dist/
+SFML/shopping_*.json
+SFML/shopping_*.csv
+
+# Generated previews and test executables
+SFML/UiPreview.exe
+SFML/ui-*.png
+tools/*.exe
+tools/ui-port-baseline-*/
+
+# Personal ledger and machine state
+SFML/holdings.tsv
+SFML/scan_profile.tsv
+
+# Capture client build output
+AlbionFeed/bin/
+AlbionFeed/obj/
+
+/bin/
+/obj/
+tools/icons/

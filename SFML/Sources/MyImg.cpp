@@ -5,11 +5,10 @@ MyImg::MyImg(const string& categ, const Vector2f& pos)
 	: category(categ)
 {
 	string path = "./img/" + categ + ".png";
-	if (!image.loadFromFile(path)) {
-		cout << "Load image error\n";
+	if (!texture.loadFromFile(path)) {
+		cout << "Load image error: " << path << '\n';
 	}
-	
-	texture.loadFromImage(image);
+
 	sprite.setTexture(texture);
 	sprite.setPosition(pos);
 	sprite.setScale(Vector2f(0.25f, 0.25f));

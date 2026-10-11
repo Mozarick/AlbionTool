@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -86,15 +86,17 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>SFML_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SFML_STATIC;WIN32;_DEBUG;_CONSOLE;NOMINMAX;_HAS_STD_BYTE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\C++\Albion_openCV\SFML\lib\SFML-2.5.1\bin;D:\C++\Albion_openCV\SFML\lib\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>D:\C++\Albion_openCV\SFML\lib\SFML-2.5.1\bin;$(ProjectDir)..\lib\SFML-2.5.1\include;$(VCPKG_ROOT)\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\C++\Albion_openCV\SFML\lib\SFML-2.5.1\bin;D:\C++\Albion_openCV\SFML\lib\SFML-2.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\C++\Albion_openCV\SFML\lib\SFML-2.5.1\bin;$(ProjectDir)..\lib\SFML-2.5.1\lib;$(VCPKG_ROOT)\installed\x64-windows\debug\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;tesseract55d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -103,32 +105,36 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;NOMINMAX;_HAS_STD_BYTE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENCV_DIR)\include;D:\C++\Albion_openCV\SFML\lib\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(OPENCV_DIR)\include;$(ProjectDir)..\lib\SFML-2.5.1\include;$(VCPKG_ROOT)\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(OPENCV_DIR)\x64\vc14\lib;D:\C++\Albion_openCV\SFML\lib\SFML-2.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;opencv_world455.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OPENCV_DIR)\x64\vc14\lib;$(ProjectDir)..\lib\SFML-2.5.1\lib;$(VCPKG_ROOT)\installed\x64-windows\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;opencv_world455.lib;tesseract55.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;NOMINMAX;_HAS_STD_BYTE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENCV_DIR)\include;D:\C++\Albion_openCV\SFML\lib\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(OPENCV_DIR)\include;$(ProjectDir)..\lib\SFML-2.5.1\include;$(VCPKG_ROOT)\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(OPENCV_DIR)\x64\vc14\lib;D:\C++\Albion_openCV\SFML\lib\SFML-2.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;opencv_world455d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OPENCV_DIR)\x64\vc14\lib;$(ProjectDir)..\lib\SFML-2.5.1\lib;$(VCPKG_ROOT)\installed\x64-windows\debug\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;opencv_world455d.lib;tesseract55d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -137,49 +143,82 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;NOMINMAX;_HAS_STD_BYTE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENCV_DIR)\include;D:\C++\Albion_openCV\SFML\lib\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(OPENCV_DIR)\include;$(ProjectDir)..\lib\SFML-2.5.1\include;$(VCPKG_ROOT)\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(OPENCV_DIR)\x64\vc14\lib;D:\C++\Albion_openCV\SFML\lib\SFML-2.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_world455.lib;sfml-graphics.lib;sfml-window.lib;sfml-system.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OPENCV_DIR)\x64\vc14\lib;$(ProjectDir)..\lib\SFML-2.5.1\lib;$(VCPKG_ROOT)\installed\x64-windows\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world455.lib;sfml-graphics.lib;sfml-window.lib;sfml-system.lib;tesseract55.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>REM SFML/OpenCV/tesseract are all linked dynamically, and the Windows loader
+REM resolves an exe's implicit imports before main() ever runs - so a PATH
+REM fix inside the program is too late. Copying the DLLs next to the exe
+REM works unconditionally, since the exe's own folder is always the first
+REM place the loader looks, no PATH or working-directory setup required.
+xcopy /y /d "$(ProjectDir)..\lib\SFML-2.5.1\bin\sfml-graphics-2.dll" "$(OutDir)"
+xcopy /y /d "$(ProjectDir)..\lib\SFML-2.5.1\bin\sfml-window-2.dll" "$(OutDir)"
+xcopy /y /d "$(ProjectDir)..\lib\SFML-2.5.1\bin\sfml-system-2.dll" "$(OutDir)"
+xcopy /y /d "$(OPENCV_DIR)\x64\vc14\bin\opencv_world455.dll" "$(OutDir)"
+xcopy /y /d "$(VCPKG_ROOT)\installed\x64-windows\bin\*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Sources\AbortSwitch.cpp" />
+    <ClCompile Include="Sources\BlackMarket.cpp" />
+    <ClCompile Include="Sources\CityBuyer.cpp" />
     <ClCompile Include="Sources\Config.cpp" />
-    <ClCompile Include="Sources\DataBase.cpp" />
     <ClCompile Include="Sources\Game.cpp" />
-    <ClCompile Include="Sources\Item.cpp" />
-    <ClCompile Include="Sources\Items.cpp" />
-    <ClCompile Include="Sources\MainMenu.cpp" />
-    <ClCompile Include="Sources\MarketAction.cpp" />
+    <ClCompile Include="Sources\Holdings.cpp" />
     <ClCompile Include="Sources\MoveToPosition.cpp" />
-    <ClCompile Include="Sources\MyImg.cpp" />
-    <ClCompile Include="Sources\MyTime.cpp" />
+    <ClCompile Include="Sources\MarketFeed.cpp" />
+    <ClCompile Include="Sources\MarketScanner.cpp" />
+    <ClCompile Include="Sources\MarketStore.cpp" />
+    <ClCompile Include="Sources\Ocr.cpp" />
     <ClCompile Include="Sources\ScreenCapture.cpp" />
-    <ClCompile Include="Sources\Shapes.cpp" />
+    <ClCompile Include="Sources\ScanProfile.cpp" />
+    <ClCompile Include="Sources\ScanProgress.cpp" />
+    <ClCompile Include="Sources\ShopList.cpp" />
+    <ClCompile Include="Sources\StudioSession.cpp" />
+    <ClCompile Include="Sources\GameShop.cpp" />
+    <ClCompile Include="Sources\UiKit.cpp" />
+    <ClCompile Include="Sources\LogSink.cpp" />
+    <ClCompile Include="Sources\ProcessLauncher.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\AbortSwitch.h" />
+    <ClInclude Include="Headers\BlackMarket.h" />
+    <ClInclude Include="Headers\CityBuyer.h" />
     <ClInclude Include="Headers\Config.h" />
-    <ClInclude Include="Headers\DataBase.h" />
     <ClInclude Include="Headers\Game.h" />
-    <ClInclude Include="Headers\Item.h" />
-    <ClInclude Include="Headers\Items.h" />
+    <ClInclude Include="Headers\Holdings.h" />
     <ClInclude Include="Headers\Menus.h" />
-    <ClInclude Include="Headers\MarketAction.h" />
     <ClInclude Include="Headers\MoveToPosition.h" />
-    <ClInclude Include="Headers\MyImg.h" />
-    <ClInclude Include="Headers\MyTime.h" />
+    <ClInclude Include="Headers\MarketFeed.h" />
+    <ClInclude Include="Headers\MarketScanner.h" />
+    <ClInclude Include="Headers\MarketStore.h" />
+    <ClInclude Include="Headers\MarketUi.h" />
+    <ClInclude Include="Headers\ShopList.h" />
+    <ClInclude Include="Headers\UiKit.h" />
+    <ClInclude Include="Headers\Ocr.h" />
     <ClInclude Include="Headers\profile.h" />
     <ClInclude Include="Headers\ScreenCapture.h" />
-    <ClInclude Include="Headers\ScreenInfo.h" />
-    <ClInclude Include="Headers\Shapes.h" />
+    <ClInclude Include="Headers\ScanProfile.h" />
+    <ClInclude Include="Headers\ScanProgress.h" />
+    <ClInclude Include="Headers\LogSink.h" />
+    <ClInclude Include="Headers\ProcessLauncher.h" />
+    <ClInclude Include="Headers\Theme.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Studio.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

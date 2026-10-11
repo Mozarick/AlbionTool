@@ -47,17 +47,11 @@ struct TB_Info {
 
 
 
-void PrintRectangle(RectangleShape& rect, const Vector2f& pos,
-	const Vector2f& size);
-
-
 void EmptyBox(RectangleShape& rect, const Vector2f& pos,
 	const Vector2f& size);
 
 void CreateText(Text& text, const Vector2f& pos, const Font& font,
 	const string& str, size_t font_size);
-
-RectangleShape CreateFrame(const Vector2f& pos, const Vector2f& size);
 
 
 

@@ -1,0 +1,47 @@
+# key	menu_top	menu_sub	slug_top	slug_sub
+armors_cloth_armor	Chest Armor	Cloth Robes	armors	cloth_armor
+armors_leather_armor	Chest Armor	Leather Jackets	armors	leather_armor
+armors_plate_armor	Chest Armor	Plate Armor	armors	plate_armor
+bags_bags	Bags	Bags	bags	bags
+bags_satchels	Bags	Satchels of Insight	bags	satchels
+capes_cape	Capes	Cape	capes	cape
+capes_bridgewatch	Capes	Bridgewatch	capes	fw_bridgewatch
+capes_fortsterling	Capes	Fort Sterling	capes	fw_fortsterling
+capes_lymhurst	Capes	Lymhurst	capes	fw_lymhurst
+capes_martlock	Capes	Martlock	capes	fw_martlock
+capes_thetford	Capes	Thetford	capes	fw_thetford
+capes_caerleon	Capes	Caerleon	capes	fw_caerleon
+capes_brecilien	Capes	Brecilien	capes	fw_brecilien
+capes_heretic	Capes	Heretic	capes	heretic
+capes_undead	Capes	Undead	capes	undead
+capes_keeper	Capes	Keeper	capes	keeper
+capes_morgana	Capes	Morgana	capes	morgana
+capes_avalonian	Capes	Avalonian	capes	avalon
+capes_demon	Capes	Demon	capes	demon
+capes_smuggler	Capes	Smuggler	capes	smuggler
+head_cloth_helmet	Head Armor	Cloth Cowl	head	cloth_helmet
+head_leather_helmet	Head Armor	Leather Hood	head	leather_helmet
+head_plate_helmet	Head Armor	Plate Helmet	head	plate_helmet
+offhands_booktype	Off-Hands	Mage	offhands	booktype
+offhands_shieldtype	Off-Hands	Warrior	offhands	shieldtype
+offhands_torchtype	Off-Hands	Hunter	offhands	torchtype
+shoes_cloth_shoes	Foot Armor	Cloth Sandals	shoes	cloth_shoes
+shoes_leather_shoes	Foot Armor	Leather Shoes	shoes	leather_shoes
+shoes_plate_shoes	Foot Armor	Plate Boots	shoes	plate_shoes
+weapons_arcanestaff	Weapons	Arcane Staff	weapons	arcanestaff
+weapons_axe	Weapons	Axe	weapons	axe
+weapons_bow	Weapons	Bow	weapons	bow
+weapons_crossbow	Weapons	Crossbow	weapons	crossbow
+weapons_cursestaff	Weapons	Cursed Staff	weapons	cursestaff
+weapons_dagger	Weapons	Dagger	weapons	dagger
+weapons_firestaff	Weapons	Fire Staff	weapons	firestaff
+weapons_froststaff	Weapons	Frost Staff	weapons	froststaff
+weapons_hammer	Weapons	Hammer	weapons	hammer
+weapons_holystaff	Weapons	Holy Staff	weapons	holystaff
+weapons_knuckles	Weapons	War Gloves	weapons	knuckles
+weapons_mace	Weapons	Mace	weapons	mace
+weapons_naturestaff	Weapons	Nature Staff	weapons	naturestaff
+weapons_quarterstaff	Weapons	Quarterstaff	weapons	quarterstaff
+weapons_shapeshifterstaff	Weapons	Shapeshifter Staff	weapons	shapeshifterstaff
+weapons_spear	Weapons	Spear	weapons	spear
+weapons_sword	Weapons	Sword	weapons	sword

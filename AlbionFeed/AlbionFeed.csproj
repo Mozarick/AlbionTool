@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>latest</LangVersion>
+		<AssemblyName>AlbionFeed</AssemblyName>
+		<RootNamespace>AlbionFeed</RootNamespace>
+		<InvariantGlobalization>true</InvariantGlobalization>
+		<!-- Npcap needs Administrator. The bot launches this elevated, but a
+		     manual double-click should ask for it too rather than fail with an
+		     unhelpful "no devices found". -->
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- SharpPcap brings PacketDotNet with it. Nothing else is needed: this
+		     program has no UI, no database and, deliberately, no uploader. -->
+		<PackageReference Include="SharpPcap" Version="6.3.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- The packet decoding stack from AlbionDataAvalonia, referenced in
+		     place and never modified, so `git pull` in that folder keeps the
+		     protocol current. Only these four projects are used; the Avalonia
+		     app itself (which is what contains the upload code) is not built. -->
+		<ProjectReference Include="..\AlbionDataAvalonia\Protocol16\Protocol16.csproj" />
+		<ProjectReference Include="..\AlbionDataAvalonia\PhotonPackageParser\PhotonPackageParser.csproj" />
+		<ProjectReference Include="..\AlbionDataAvalonia\Albion.Network\Albion.Network.csproj" />
+		<ProjectReference Include="..\AlbionDataAvalonia\AlbionDataAvalonia.Shared\AlbionDataAvalonia.Shared.csproj" />
+	</ItemGroup>
+
+</Project>

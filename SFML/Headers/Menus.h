@@ -1,151 +1,132 @@
 #pragma once
-#include <map>
 #include <string>
+#include <vector>
 
-#include "Shapes.h"
-#include "MyImg.h"
+#include "UiKit.h"
 
 using namespace std;
 
-const vector<string> vMenu = {
 
-	"Check",
-	"Calculate",
-	"Sort",
-
-	"Buy",
-	"Order",
-	"Refresh",
-
-	"RefreshOrders",
-
-	"Print",
-	"PrintB",
-	"Sell",
-
-	"Categories",
-	"Load",
-	"Save",
-
-	"Exit",
-
-};
-
-// Не используется
-/*const map<string, TB_Info> mMenu = {
-	{"Check" , {Vector2f(50, 50), Vector2f(100, 40), 16}},
-	{"Calculate" , {Vector2f(200, 50), Vector2f(100, 40), 16}},
-	{"Sort" , {Vector2f(350, 50), Vector2f(100, 40), 16}},
-
-	{"Buy" , {Vector2f(50, 100), Vector2f(100, 40), 16}},
-	{"Order" , {Vector2f(200, 100), Vector2f(100, 40), 16}},
-	{"Refresh" , {Vector2f(350, 100), Vector2f(100, 40), 16}},
-
-	{"Print" , {Vector2f(50, 150), Vector2f(100, 40), 16}},
-	{"PrintB" , {Vector2f(200, 150), Vector2f(100, 40), 16}},
-	{"Sell" , {Vector2f(350, 150), Vector2f(100, 40), 16}},
-
-	{"Settings" , {Vector2f(50, 200), Vector2f(100, 40), 16}},
-	{"Exit" , {Vector2f(200, 200), Vector2f(100, 40), 16}},
-
-
-	{"Load" , {Vector2f(100, 400), Vector2f(100, 40), 16}},
-	{"Save" , {Vector2f(300, 400), Vector2f(100, 40), 16}},
-};*/
-
-const map<string, TB_Info> mCheck = {
-
-	{"THETFORD" , {Vector2f(50, 50), Vector2f(150, 40), 16}},
-	{"FORT STERLING" , {Vector2f(50, 100), Vector2f(150, 40), 16}},
-	{"LYMHURST" , {Vector2f(50, 150), Vector2f(150, 40), 16}},
-	{"BRIDGEWATCH" , {Vector2f(50, 200), Vector2f(150, 40), 16}},
-	{"MARTLOCK" , {Vector2f(50, 250), Vector2f(150, 40), 16}},
-	{"CAERLEON" , {Vector2f(50, 300), Vector2f(150, 40), 16}},
-	{"BLACK MARKET" , {Vector2f(50, 350), Vector2f(150, 40), 16}},
-	{"BACK" , {Vector2f(50, 400), Vector2f(150, 40), 16}},
-
-};
-
-const map<string, TB_Info> mCalculate = {
-
-	{"THETFORD" , {Vector2f(50, 50), Vector2f(150, 40), 16}},
-	{"FORT STERLING" , {Vector2f(50, 100), Vector2f(150, 40), 16}},
-	{"LYMHURST" , {Vector2f(50, 150), Vector2f(150, 40), 16}},
-	{"BRIDGEWATCH" , {Vector2f(50, 200), Vector2f(150, 40), 16}},
-	{"MARTLOCK" , {Vector2f(50, 250), Vector2f(150, 40), 16}},
-	{"CAERLEON" , {Vector2f(50, 300), Vector2f(150, 40), 16}},
-	
-	{"BACK" , {Vector2f(50, 400), Vector2f(150, 40), 16}},
-
-};
-
-
-//const map<string, MI_Info> mSettings = {
+// The main menu, grouped by CONSEQUENCE rather than laid out as ten identical
+// boxes.
 //
-//	{"Curse" , Vector2f(40.f, 50.f)},
-//	{"Arcane" , Vector2f(115.f, 50.f)},
-//	{"Fire" , Vector2f(190.f, 50.f)},
-//	{"Frost" , Vector2f(265.f, 50.f)},
-//	{"Holy" , Vector2f(340.f, 50.f)},
-//	{"Nature" , Vector2f(415.f, 50.f)},
+// The old grid put `Plan` and `BuyCity` side by side looking exactly alike,
+// and only one of them spends real silver. That was already the most dangerous
+// thing about the screen; the four groups below are what fixes it, and the
+// grouping is the reason this is a list rather than a prettier grid.
 //
-//	{"Axe" , Vector2f(40.f, 125.f)},
-//	{"Dagger" , Vector2f(115.f, 125.f)},
-//	{"Hammer" , Vector2f(190.f, 125.f)},
-//	{"Mace" , Vector2f(265.f, 125.f)},
-//	{"Bag" , Vector2f(340.f, 125.f)},
-//	{"SatchelOfInsight" , Vector2f(415.f, 125.f)},
-//	
-//	{"Cowl" , Vector2f(40.f, 200.f)},
-//	{"Robe" , Vector2f(115.f, 200.f)},
-//	{"Sandals" , Vector2f(190.f, 200.f)},
-//	{"Hood" , Vector2f(265.f, 200.f)},
-//	{"Jacket" , Vector2f(340.f, 200.f)},
-//	{"Shoes" , Vector2f(415.f, 200.f)},
-//
-//	{"Helmet" , Vector2f(40.f, 275.f)},
-//	{"Armor" , Vector2f(115.f, 275.f)},
-//	{"Boots" , Vector2f(190.f, 275.f)},
-//	
-//	
-//	{"Back" , Vector2f(50.f, 400.f)},
-//};
-
-const vector<string> vCategories = {
-
-	"Curse" ,
-	"Arcane" ,
-	"Fire" ,
-	"Frost" ,
-	"Holy" ,
-	"Nature" ,
-
-	"Axe" ,
-	"Dagger" ,
-	"Hammer" ,
-	"Mace" ,
-	"Sword",
-
-	"OffHand",
-
-	"Bag" ,
-	"SatchelOfInsight" ,
-
-	"Cowl" ,
-	"Robe" ,
-	"Sandals" ,
-
-	"Hood" ,
-	"Jacket",
-	"Shoes" ,
-
-	"Helmet" ,
-	"Armor",
-	"Boots" ,
-
-	"Back" ,
+// `command` is what MenuConroller matches on and MUST NOT change - it is the
+// routing id. `label` is only ever read by a human, so it is free to be
+// reworded or translated without touching a single comparison.
+struct MenuEntry {
+	const char* command;
+	const char* label;
+	Ui::Tone tone;
+	bool chevron;
 };
 
+struct MenuSection {
+	const char* header;
+	vector<MenuEntry> entries;
+};
+
+// Order matters twice over: top-to-bottom is the order the work is actually
+// done in, and the destructive group is last because nothing below it can be
+// reached by overshooting.
+inline const vector<MenuSection>& MenuSections() {
+	static const vector<MenuSection> sections = {
+		{ "MARKET DATA", {
+			{ "Scan",     "Scan markets",  Ui::Tone::Default, true },
+			{ "ScanName", "Scan by item name", Ui::Tone::Default, false },
+			{ "Settings", "Scan settings", Ui::Tone::Default, true },
+			// The single most common cure for "scan returns 0 orders".
+			{ "Capture",  "Reconnect capture", Ui::Tone::Default, true }
+		} },
+
+		// Both of these are dry runs. Saying so in the header is cheaper than
+		// hoping the reader remembers which of the six buttons cost money.
+		{ "PREVIEW \xC2\xB7 SPENDS NOTHING", {
+			{ "Plan",  "Plan",  Ui::Tone::Default, true },
+			{ "Deals", "Find deals", Ui::Tone::Default, true },
+			{ "Shop",  "Manual shopping", Ui::Tone::Default, true }
+		} },
+
+		{ "SPENDS SILVER", {
+			{ "BuyCity", "Auto-buy in city",          Ui::Tone::Default, true },
+			{ "SellBM",  "Auto-sell to Black Market", Ui::Tone::Default, true }
+		} },
+
+		// Clear wipes the ledger too, and the goods it forgets do not leave
+		// the bag. Red, and on its own, for that reason.
+		{ "DANGER", {
+			{ "Clear", "Clear Everything", Ui::Tone::Destructive, false },
+			{ "Exit",  "Exit",             Ui::Tone::Destructive, false }
+		} }
+	};
+	return sections;
+}
 
 
+// One group of the menu, with the geometry it was laid out at.
+struct MenuBlock {
+	const MenuSection* section;
+	vector<Ui::Row> rows;
+	Ui::GroupGeom geom;
+};
 
+// The four groups, two per column.
+//
+// Called by the drawing AND by the hit test, and that is the point: the old
+// menu matched clicks by comparing the label string, so a reworded label would
+// silently stop routing. Here a click can only land in a box this function
+// produced, and each box carries its own command id.
+//
+// It lives in the header rather than in Game.cpp so the preview harness can
+// render the real menu instead of a copy that drifts.
+inline vector<MenuBlock> MenuBlocks(size_t shopCount) {
+	const float colW = 420.f;
+	const float colX[2] = { Ui::Inset, Ui::Inset + colW + 20.f };
+	const float firstTop = 314.f;
+	const float gapY = 26.f;
+
+	const vector<MenuSection>& sections = MenuSections();
+	vector<MenuBlock> blocks;
+	blocks.reserve(sections.size());
+
+	float rowTop = firstTop;
+	float rowBottom = firstTop;
+
+	for (size_t i = 0; i < sections.size(); ++i) {
+		// Two columns, so every second section starts a new row. The row
+		// advances by the TALLEST group in it, not by a fixed step - the
+		// groups hold different numbers of rows.
+		if (i > 0 && (i % 2) == 0) {
+			rowTop = rowBottom + gapY;
+		}
+
+		MenuBlock b;
+		b.section = &sections[i];
+		for (const MenuEntry& e : sections[i].entries) {
+			Ui::Row r;
+			r.command = e.command;
+			r.label = e.label;
+			r.chevron = e.chevron;
+			r.tone = e.tone;
+
+			// The one row that carries a value: how much is waiting on the
+			// shopping list, visible without opening it.
+			if (r.command == "Shop" && shopCount > 0) {
+				r.value = to_string(shopCount) +
+					(shopCount == 1 ? " item" : " items");
+			}
+			b.rows.push_back(r);
+		}
+
+		b.geom = Ui::LayoutGroup(colX[i % 2], rowTop, colW, true, b.rows.size());
+		if (b.geom.bottom > rowBottom) {
+			rowBottom = b.geom.bottom;
+		}
+		blocks.push_back(b);
+	}
+	return blocks;
+}
